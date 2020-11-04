@@ -1,4 +1,5 @@
 import os
+from local_setting import EMAIL_ADDR, EMAIL_PASSWORD
 
 
 class Config(object):
@@ -9,8 +10,8 @@ class Config(object):
     SESSION_USE_SIGNER = 2 * 7 * 24 * 3600
     MAIL_SERVER = "smtp.163.com"
     MAIL_PROT = 465
-    MAIL_USERNAME = "17674705740@163.com"
-    MAIL_PASSWORD = "0610tan"
+    MAIL_USERNAME = EMAIL_ADDR         # 邮箱地址
+    MAIL_PASSWORD = EMAIL_PASSWORD     # 邮箱配置的密码
     UPLOADED_PHOTOS_DEST = "chengse_project/static/uploads"
     ENABLE_THREADS = True
 
