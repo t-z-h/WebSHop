@@ -1,0 +1,11 @@
+# pycharm
+.idea/
+
+__pycache__/
+*$py.class
+
+migrations
+
+*.pptx
+areas.sql
+goods.sql

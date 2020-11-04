@@ -1,0 +1,364 @@
+{% extends "base_cart.html" %}
+{% block topfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/static/css/common.css" rel="stylesheet" type="text/css" />
+<link href="/static/fonts/iconfont.css"  rel="stylesheet" type="text/css" />
+<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/Orders.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/show.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+<script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+<script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+<script src="/static/js/jquery.reveal.js" type="text/javascript"></script>
+<script src="/static/js/common_js.js" type="text/javascript"></script>
+<script src="/static/js/footer.js" type="text/javascript"></script>
+    <link href="/static/css/show.css" rel="stylesheet" type="text/css" />
+      <link rel="stylesheet" href="/static/css/main.css">
+
+    <script type="text/javascript">
+
+
+
+
+    $(function (){
+
+        update_all_goods_info();
+
+
+        function update_all_goods_info() {
+            goods_total_count = 0;
+            goods_total_price = 0;
+            goods_total_save = 0;
+            goods_total_integral = 0;
+            $(".tr").find(":checked").parents("tr").each(function () {
+                goods_price = $(this).find("#price_item_1").text();
+
+                goods_price = parseFloat(goods_price.slice(1,goods_price.length));
+                {#alert(goods_price);#}
+                goods_count = $(this).find(".number_text").val();
+                goods_count = parseInt(goods_count);
+                goods_original = $(this).find("#Original_Price_1").text();
+                goods_original = parseFloat(goods_original.slice(1,goods_price.length));
+                goods_save = goods_original * goods_count - goods_price*goods_count;
+                total_price = goods_count* goods_price;
+                {#goods_integral = parseInt(goods_price)/10;#}
+                {#alert(save);#}
+                $(this).find("#total").text("￥"+total_price.toFixed(2));
+                goods_total_count += goods_count;
+                goods_total_price += total_price;
+                goods_total_save += goods_save;
+                goods_total_integral += parseInt(goods_total_price/10);
+            });
+            //设置商品的总数目和总计
+            $("#Total_price").text("￥"+goods_total_price.toFixed(2));
+            $("#Preferential_price").text("￥"+goods_total_save.toFixed(2));
+            $("#total_points").text(goods_total_integral);
+            $("#send").text(goods_total_count)
+        }
+        var $pop_con = $('.pop_main');
+        var $pop = $('.pop_con');
+        var iTop = $pop.css('top');
+
+        error_update = false;
+        function update_remove_cart_info(goods_id, goods_count) {
+            $.ajaxSettings.async = false;
+            $.get(
+
+                "/cart/update/?goods_id="+ goods_id +"&goods_count="+ goods_count,
+                function (data) {
+                //if res==1 更新成功
+                if(data.res==0){
+                    {#alert(1);#}
+
+
+                    $(".pop_text").text("您加入购物车的数量已超过库存");
+                            {#$(".cancel").show();#}
+                            $pop_con.show();
+                            $pop.css({'opacity':0,'top':0});
+                            $pop.animate({'opacity':1,'top':iTop});
+                    $('.confirm').click(function () {
+                       $pop.animate({'opacity': 0, 'top': 0}, function () {
+                        $pop_con.hide();
+                    });
+                    });
+
+                    error_update = true
+                }
+                else{
+                    error_update = false
+                }
+            });
+            $.ajaxSettings.async = true;
+        }
+
+
+        $(".jia").click(function () {
+            goods_count = $(this).parents("tr").find(".number_text").val();
+            goods_id = $(this).prev().attr("goods_id");
+            goods_count = parseInt(goods_count)+1;
+            {#alert(goods_count);#}
+            //发起请求
+            update_remove_cart_info(goods_id, goods_count);
+            if(error_update == false){
+                $(this).prev().val(goods_count);
+                is_checked = $(this).parents("tr").find(":checkbox").prop("checked");
+                if (is_checked){
+
+                    update_all_goods_info();
+                    {#alert(goods_price)#}
+                }
+                else{
+                    goods_price = $(this).parents("tr").find("#price_item_1").text();
+                    {#alert(goods_price);#}
+                goods_price = parseFloat(goods_price.slice(1,goods_price.length));
+                {#alert(goods_price);#}
+                goods_count = $(this).parents("tr").find(".number_text").val();
+                goods_count = parseInt(goods_count);
+                total_price = goods_price*goods_count;
+                {#alert(goods_count);#}
+                $(this).parents("tr").find("#total").text("￥"+total_price.toFixed(2));
+                }
+            }
+        });
+        //全选和全不选
+        $(".cart-checkbox").find(":checkbox").change(function () {
+            is_checked = $(this).prop("checked");
+
+            {#alert(is_checked);#}
+            {#update_all_goods_info();#}
+            $(".tr").find(":checkbox").each(function () {
+                $(this).prop("checked", is_checked);
+
+            });
+            //更新商品的总计
+            update_all_goods_info();
+        });
+
+
+    //商品对用的checkbox状态发生改变
+        $(".tr").find(":checkbox").change(function () {
+            //获取所有商品的checkbox的总数
+            all_len = $(".tr").length;
+            //alert(all_len)
+            //2.获取勾选的商品的checkbox数目、
+            checked_len = $(".tr").find(":checked").length;
+            if (all_len == checked_len){
+                //设置全选、
+                $(".cart-checkbox").find(":checkbox").prop("checked", true)
+            }
+            else{
+                $(".cart-checkbox").find(":checkbox").prop("checked", false)
+            }
+            //更新商品总价
+            update_all_goods_info();
+        });
+
+        $(".jian").click(function () {
+            goods_count = $(this).parents("tr").find(".number_text").val();
+            goods_id = $(this).next().attr("goods_id");
+            goods_count = parseInt(goods_count)-1;
+            {#alert(goods_count);#}
+            //发起请求
+            if (goods_count>0) {
+                update_remove_cart_info(goods_id, goods_count);
+                if (error_update == false) {
+                    $(this).next().val(goods_count);
+                    is_checked = $(this).parents("tr").find(":checkbox").prop("checked");
+                    if (is_checked) {
+                        update_all_goods_info();
+                        {#alert(goods_price)#}
+                    } else {
+                        goods_price = $(this).parents("tr").find("#price_item_1").text();
+                        {#alert(goods_price);#}
+                        goods_price = parseFloat(goods_price.slice(1, goods_price.length));
+                        {#alert(goods_price);#}
+                        goods_count = $(this).parents("tr").find(".number_text").val();
+                        goods_count = parseInt(goods_count);
+                        total_price = goods_price * goods_count;
+                        {#alert(goods_count);#}
+                        $(this).parents("tr").find("#total").text("￥" + total_price.toFixed(2));
+                    }
+                }
+                update_all_goods_info();
+            }
+        });
+
+
+        pre_goods_count = 1;
+    $(".number_text").blur(function () {
+        goods_count = $(this).val();
+        goods_id = $(this).attr("goods_id");
+        if (isNaN(goods_count) || goods_count.trim().length == 0 || parseInt(goods_count) < 0){
+            $(this).val(pre_goods_count)
+        }
+        else{
+            goods_count = parseInt(goods_count);
+            //更新购物车表中的数据
+            update_remove_cart_info(goods_id, goods_count);
+            if(error_update == false){
+                $(this).next().val(goods_count);
+                is_checked = $(this).parents("tr").find(":checkbox").prop("checked");
+                if (is_checked){
+                    update_all_goods_info();
+                    {#alert(goods_price)#}
+                }
+                else{
+                    goods_price = $(this).parents("tr").find("#price_item_1").text();
+                    {#alert(goods_price);#}
+                goods_price = parseFloat(goods_price.slice(1,goods_price.length));
+                {#alert(goods_price);#}
+                goods_count = $(this).parents("tr").find(".number_text").val();
+                goods_count = parseInt(goods_count);
+                total_price = goods_price*goods_count;
+                {#alert(goods_count);#}
+                $(this).parents("tr").find("#total").text("￥"+total_price.toFixed(2));
+                }
+                pdate_all_goods_info();
+            }
+            else{
+                $(this).val(pre_goods_count);
+            }
+        }
+
+    });
+
+
+    $(".tr").find("#sc").click(function () {
+        goods_tr = $(this).parents("tr");
+        {#alert(goods_tr);#}
+        goods_id = $(this).parents("tr").find(".number_text").attr("goods_id");
+        $.get(
+            "/cart/delete_goods/?goods_id="+goods_id,function (data) {
+                if(data.res == "success"){
+                    goods_tr.remove();
+                    is_checked = $(this).parents("tr").find(":checkbox").prop("checked");
+                if (is_checked){
+                    update_all_goods_info();
+                    {#alert(goods_price)#}
+                }
+                update_all_goods_info();
+                }
+            }
+        )
+    });
+    $("#myform1").submit(function () {
+        check_len  = $(".tr").find(":checked").length;
+        if( check_len > 0){
+            $("#hint").hide();
+            return true;
+        }else{
+            $("#hint").text("请选择付款商品").show();
+            return false;
+        }
+    })
+    });
+
+
+
+    </script>
+
+{% endblock %}
+{% block title %}购物车{% endblock %}
+<!--购物车样式-->
+{% block text %}
+
+<div class="Inside_pages clearfix">
+  <div class="shop_carts">
+   <div class="Process"><img src="/static/images/Process_img_01.png" /></div>
+ <div class="Shopping_list">
+  <div class="title_name">
+    <ul>
+	<li class="checkbox"></li>
+	<li class="name">商品名称</li>
+	<li class="scj">市场价</li>
+	<li class="bdj">本店价</li>
+	<li class="sl">购买数量</li>
+	<li class="xj">小计</li>
+	<LI class="cz">操作</LI>
+  </ul>
+ </div>
+  <div class="shopping">
+  <form  method="post" action="/order/order_page/" id="myform1">
+ <table class="table_list">
+ {% if cart_list %}
+     {% for goods in cart_list %}
+   <tr class="tr on">
+   <td class="checkbox"><input name="cart_id" type="checkbox" value="{{ goods[1].id }}" /></td>
+    <td class="name">
+	  <div class="img"><a href="#"><img src="/static/{{ goods[0].index_image }}"/></a></div>
+	  <div class="p_name"><a href="#">{{ goods[0].product_title[:25] }}</a></div>
+	</td>
+	<td class="scj sp"><span id="Original_Price_1">￥{{ goods[0].product_original }}</span></td>
+	<td class="bgj sp" ><span id="price_item_1">￥{{ goods[0].product_price }}</span></td>
+	<td class="sl">
+	    <div class="Numbers">
+		  <a onClick="setAmount.reduce('#qty_item_1')" href="javascript:;" class="jian">-</a>
+          <input type="text" name="qty_item_" value="{{ goods[1].goods_count }}" id="qty_item_1" onkeyup="setAmount.modify('#qty_item_1')" class="number_text" goods_id="{{ goods[1].goods_id }}">
+		  <a onclick="setAmount.add('#qty_item_1')" href="javascript:;" class="jia">+</a>
+		 </div>
+	</td>
+	<td class="xj" ><span id="total">￥{{ goods[0].product_price * goods[1].goods_count }}</span><input type="hidden" name="total_price" id="total_price" value=""></td>
+	<td class="cz">
+{#        /cart/delete_goods/{{ goods[1].id }}#}
+	 <p><a href="javascript:;" id="sc">删除</a><P>
+{#	 <p><a href="#">收藏该商品</a></p>#}
+	</td>
+   </tr>
+{% endfor %}
+
+ </table>
+ <div class="sp_Operation clearfix">
+  <div class="select-all">
+  <div class="cart-checkbox"><input type="checkbox"   id="CheckedAll" name="toggle-checkboxes" class="jdcheckbox" clstag="clickcart">全选</div>
+  <div class="operation"><span style="font-size:15px;">共计<span id="send" style="color:red;font-weight:bold;"></span>商品</span></div>
+    </div>    
+	 <!--结算-->
+	<div class="toolbar_right">
+    <ul class="Price_Info">
+    <li class="p_Total"><label class="text">商品总价：</label><span class="price sumPrice" id="Total_price"></span></li>
+	<li class="Discount"><label class="text">已&nbsp;&nbsp;节&nbsp;&nbsp;省：</label><span class="price" id="Preferential_price"></span></li>
+    <li class="integral">购物完成后可获得<b id="total_points"></b>积分</li>
+    </ul>
+	<div class="btn">
+        <input type="submit" value="去结算" class="cartsubmit">
+
+        <a class="continueFind" href="/"></a></div>
+         <span style="position: relative;top:155px;;left: 180px;display: none;color: red;" id="hint">提示信息</span>
+  </div>
+
+  </div>
+   </form>
+ </div>
+ </div>
+  {% else %}
+     <span style="line-height: 150px;font-size: 30px;color:red;position: relative;left:450px;">暂未添加商品</span>
+ {% endif %}
+ <!--推荐产品样式-->
+ <div class="recommend_shop">
+   <div class="title_name">推荐购买</div>
+   <div class="recommend_list">
+    <div class="hd">
+     <a class="prev" href="javascript:void(0)">&gt;</a>
+     <a class="next" href="javascript:void(0)">&lt;</a>
+    </div>
+    <div class="bd">
+      <ul>
+          {% for goods in recommend %}
+       <li class="recommend_info">
+       <a href="#" class="buy_btn">立即购买</a>
+       <a href="#" class="img"><img src="/static/{{ goods.index_image }}" width="160px" height="160px"/></a>
+       <a href="#" class="name">{{ goods.product_title }}</a>
+       <h4><span class="Price"><i>RMB</i>{{ goods.product_price }}</span></h4>
+       </li>
+{% endfor %}
+      </ul>  
+    </div>
+   </div>
+   <script>jQuery(".recommend_list").slide({titCell:".hd ul",mainCell:".bd ul",autoPage:true,effect:"left",autoPlay:true,vis:6});</script>
+ </div>
+ </div>
+</div>
+
+<!--底部图层-->
+{% endblock %}
+

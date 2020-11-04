@@ -1,0 +1,181 @@
+{% extends "base_user.html" %}
+{% block topfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/static/css/common.css" rel="stylesheet" type="text/css" />
+<link href="/static/fonts/iconfont.css"  rel="stylesheet" type="text/css" />
+<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/sumoselect.css" rel="stylesheet"  type="text/css"/>
+<link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+<script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+<script src="/static/js/jquery.sumoselect.js"></script>
+<script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+<script src="/static/js/common_js.js" type="text/javascript"></script>
+<script src="/static/js/footer.js" type="text/javascript"></script>
+    <script>
+    $(function () {
+        $("#province").mouseleave(function () {
+            var province = $('#province option:selected').val(),
+                shi = $("#city"),
+                shi_opt = shi.children("option");
+            $.get(
+                "/user/city/?province=" + province,
+                function (data) {
+                    shi_opt.each(function () {
+                                $(this).remove(); // 删除
+                            });
+                            data.shi.forEach(function (element) {
+                                var $opton = $('<option id = "del1" value="' + element[0] + '">' + element[1] + '</option>');
+                                $("#city").append($opton); //添加
+                            });
+
+
+                }
+            )
+        });
+        $("#city").mouseleave(function () {
+            var city = $('#city option:selected').val(),
+                county = $("#county"),
+                county_opt = county.children("option");
+            $.get("/user/county/?city="+ city,
+            function (data) {
+                county_opt.each(function () {
+                                $(this).remove(); // 删除
+                            });
+                            data.county.forEach(function (element) {
+                                var $opton = $('<option id = "del1" value="' + element[0] + '">' + element[1] + '</option>');
+                                $("#county").append($opton); //添加
+                            });
+                            zip_code = $("#city").val();
+                            {#alert(zip_code);#}
+                            $("#zip").val(zip_code);
+            });
+
+        });
+
+    })
+    </script>
+{% endblock %}
+{% block title %}收货地址管理{% endblock %}
+
+  <script type="text/javascript">
+        $(document).ready(function () {
+            window.asd = $('.SlectBox').SumoSelect({ csvDispCount: 3 });
+            window.test = $('.testsel').SumoSelect({okCancelInMulti:true });
+        });
+    </script>
+	<!--[if IE]>
+		<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
+	<![endif]-->/static/
+{#{% block body %}#}
+<!--顶部样式-->
+
+
+<!--用户中心收货地址-->
+ <div class="user_style clearfix">
+    <div class="user_center">
+
+    <!--左侧菜单栏-->
+
+  <!--右侧样式-->
+    {% block unlike %}
+   <div class="right_style">
+     <div class="info_content">
+     <!--地址管理样式-->
+      <div class="adderss_style">
+        <div class="title_Section"><span>收货地址管理</span></div>
+        <div class="adderss_list">
+          <!--地址列表-->
+      <div class="Address_List clearfix">
+        <!--地址类表-->
+      {% if addr %}
+          {% for address in addr %}
+           <ul class="Address_info">
+            <div class="address_title">
+            <a href="/user/modify_addr/{{ address.id }}/" class="modify iconfont icon-fankui btn btn-primary" title="修改信息" data-toggle="modal" id="purebox"></a>
+            地址信息
+            <a href="javascript:over('0')" class="delete ">
+{#                <i class="iconfont icon-close2"></i>#}
+{#                <span class="">这是您的第{{ address.id }}地址</span>#}
+                <a href="/user/delete_addr/{{ address.id }}" class="iconfont icon-close2" style="position: relative;left: 175px;color: red;"></a>
+            </a></div>
+
+            <li>{{ address.recipient_name }}</li>
+            <li>{{ address.recipient_addr }}</li>
+            <li>{{ address.recipient_phone }}</li>
+            <li>{{ address.zip_code }}</li>
+           </ul>
+      {% endfor %}
+          {% else %}
+          <h1 style="color:red;">尚未添加地址</h1>
+      {% endif %}
+         </div>
+        </div>
+        <form action="/user/add_address/" method="post">
+        <div class="Add_Addresss">
+             <div class="title_name"><i></i>添加地址</div>
+             <table>
+              <tbody><tr>
+               <td class="label_name">收货区域</td>
+               <td colspan="3" class="select">
+{#               <input type="text" name="sheng"， placeholder="省份">#}
+                <label> 省份 </label><select class="kitjs-form-suggestselect " id="province" name="sheng">
+{#                   {% for sheng in  %}#}
+                   {% for pro in province %}
+                   <option value="{{ pro.aid }}">{{ pro.atitle }}</option>
+                   {% endfor %}
+               </select>
+                <label> 市/县 </label><select class="kitjs-form-suggestselect " id="city" name="shi">
+                   <option value="" id="shi">北京市</option>
+               </select>
+                <label> 区/县 </label><select class="kitjs-form-suggestselect" id="county" name="xian">
+                   <option value="" id="xian">东城区</option>
+               </select>
+               </td>
+               </tr>
+               <tr><td class="label_name">详细地址</td><td><input type="text" class="Add-text" name="xiangxi"><i>（必填）</i></td>
+
+              <tr>
+              <td class="label_name">收件人姓名</td><td><input type="text" class="Add-text" name="name"><i>（必填）</i></td>
+              <td class="label_name">电子邮箱</td><td><input type="text" class="Add-text" disabled="disabled" name="email" value="{{ info.email }}"><i>（选填）</i></td>
+              </tr>
+              <tr>
+              <td class="label_name">邮&nbsp;&nbsp;编</td><td><input type="text" class="Add-text" name="zip_code" id="zip"><i>（必填）</i></td>
+              <td class="label_name">固定电话</td><td><input type="text" class="Add-text" name="tem"><i>（选填）</i></td>
+              </tr>
+              <tr>
+              <td class="label_name">手机</td><td><input type="text" class="Add-text" name="phone"><i>（必填）</i></td></tr>
+              <tr><td class="label_name"></td><td></td><td class="label_name"></td><td></td>
+              </tr>
+             </tbody></table>
+             <div class="address_Note"><span>注：</span>只能添加5个收货地址信息。请乎用假名填写地址，如造成损失由收货人自己承担。</div>
+             <div class="btn"><input name="1" type="submit" value="添加地址" class="Add_btn"></div>
+
+         </div>
+       </form>
+      </div>
+     </div>
+   </div>
+  {% endblock %}</div>
+ </div>
+
+<!--底部图层-->
+{# 	<script src="/static/purebox/bootstrap-transition.js"></script>#}
+{#	<script src="/static/purebox/application.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-alert.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-modal.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-dropdown.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-scrollspy.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-tab.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-tooltip.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-popover.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-button.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-collapse.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-carousel.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-typeahead.js"></script>#}
+{#	<script src="/static/purebox/bootstrap-affix.js"></script>#}
+{#	<script src="/static/purebox/holder/holder.js"></script>#}
+{#	<script src="/static/purebox/google-code-prettify/prettify.js"></script>#}
+{#	<script src="/static/purebox/jquery.purebox.js"></script>#}
+{#	<script src="/static/purebox/jquery.resizable.js"></script>#}
+
+

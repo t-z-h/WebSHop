@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/static/css/common.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/fonts/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/Orders.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+    <script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.reveal.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+    <script src="/static/js/common_js.js" type="text/javascript"></script>
+    <script src="/static/js/footer.js" type="text/javascript"></script>
+    <title>用户登录</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+        <script>
+             function changeCode() {
+                  $("#verify_img").attr("src","/user/verify_code/?"+Math.random())
+           }
+            $(function () {
+                var username_error=false,
+                    pwd_error=false,
+                    yzm_error=false;
+                $("#user_text").blur(function () {
+                    // 获取用户名和密码
+                    username=$("#user_text").val();
+                    $.get(
+                        "/user/check_login/?username=" + username,
+                        function (data) {
+                            //res=0用户名不存在
+                            {#alert(data.res);#}
+                            if(data.res=='inexistence'){
+                                $("#user_text").next().show().html("请检查用户名");
+                                username_error=true;
+
+                        }
+                            else{
+                                $("#user_text").next().hide();
+                                username_error=false;
+                            }
+
+                        }
+                    )
+
+                });
+                $("#Codes_text").blur(function () {
+                    var yzm=$("#Codes_text").val();
+                    $.get(
+                        "/user/check_yzm/?yzm="+yzm,
+                        function (data) {
+                            if (data.res=="yzm_error"){
+                            $("#Codes_text").next().next().show().html("验证码错误");
+                            yzm_error=true;
+                        }
+                        else{
+                            $("#Codes_text").next().next().hide();
+                            yzm_error=false;
+                    }
+
+                });
+});
+
+                $("#btnLogin").click(function () {
+                    var username = $("#user_text").val(),
+                        password = $("#tbPassword").val(),
+                        remember = $('input[name="checkbox"]').is(":checked");
+                    form_data = {
+                        "username": username,
+                        "password": password,
+                        "remember": remember
+                    };
+                    $.post("/user/check_login/", form_data,
+                    function (data) {
+                        {#alert(data.res);#}
+                        if(data.res=="error_pwd"){
+                            $("#tbPassword").next().show().html("密码错误");
+                            pwd_error=true;
+                        }
+                        else{
+                            {#alert(2);#}
+                            $("#tbPassword").next().hide();
+                            pwd_error=false;
+                        }
+                        if (yzm_error==false){
+                            if(pwd_error == false){
+                                 location.href = data.next_url
+                            }
+
+                        }
+
+
+                    })
+                });
+
+
+
+                });
+        </script>
+    <style>
+        .check{
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+<div class="Reg_log_style">
+    <div class="logo"><a href="/"><img src="/static/images/logo1.png"/></a></div>
+    <div class="login_style">
+        <div class="left_img"><img src="/static/images/bg_name_03.png"/></div>
+        <div class="right_img"><img src="/static/images/bg_name_05.png"/></div>
+        <form id="myform" class="sign_area" autocomplete="off" method="post">
+            <div class="title_name"><span>登录</span></div>
+            <div class="login_m_1">
+                <a href="/user/register/" style="position: relative;left: 450px;top:-10px;">快速注册&gt;&gt;</a>
+                <div class="add_login">
+                    <ul>
+                        <li class="frame_style"><label class="user_icon"></label><input name="username" type="text"
+                                                                                        id="user_text" placeholder="用户名" value="{{ username }}"/>
+                            <span class="check">提示信息</span>
+                        </li>
+                        <li class="frame_style"><label class="password_icon"></label><input name="password" type="password"
+                                                                                            id="tbPassword" placeholder="密码"/>
+                            <span class="check">密码错误</span>
+                        </li>
+
+                        <li class="frame_style"><label class="Codes_icon"></label><input name="yzm" type="text"
+                                                                                         id="Codes_text" placeholder="验证码"/><br/>
+                            <span class="check">验证码错误</span>
+                            <div class="Codes_region"><img src="/user/verify_code/" alt="看验证码" id="verify_img" onclick="changeCode()"><br>
+                                <a href="javascript:changeCode()">看不清,换一张</a>
+
+                            </div>
+                        </li>
+                    </ul>
+
+
+                    <div class="auto_login clearfix">
+                        <p class="clearfix"><input name="checkbox" type="checkbox"><label>记住用户名</label>
+                            <span id="agreement_tips" class="auto_tips" style="">请勿在公用电脑上启用</span>
+                        </p>
+                        <a href="/user/retrieve/" target="_blank" class="forget_pswd">忘记密码？</a>
+                    </div>
+                    <div class="center clearfix">
+                        <input type="button" id="btnLogin" value="立即登录" style="width:460px;height:40px;background-color:rgb(255,99,91);font-size:18px;color:#fff;font-family:'Microsoft Yahei'    ;cursor:pointer;" onclick="">
+                    </div>
+
+                </div>
+            </div>
+        </form>
+        <!--其他登录方式-->
+        <div class="Login_Method">
+            <div class="title"><span>第三方登录方式</span></div>
+            <div><a href="#"><img src="/static/images/l_1.png"/></a><a href="#"><img
+                    src="/static/images/l_2.png"/></a><a href="#"><img src="/static/images/l_4.png"/></a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="btmbg">
+    <div class="btm">
+        备案/许可证编号：蜀ICP备12009302号-1-www.dingguagua.com Copyright © 2015-2018 商城网 All Rights Reserved. 复制必究 , Technical
+        Support: Dgg Group <br>
+
+    </div>
+</div>
+</body>
+</html>

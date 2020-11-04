@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>找回密码</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/holder.js"></script>
+    <style>
+        * {
+            font-family: "Microsoft Yahei";
+        }
+        .form-group{
+            margin:70px;
+        }
+
+
+    </style>
+    <script>
+        $(function () {
+            $("#btn").click(function () {
+                var username = $("#inputEmail3").val();
+                $.get(
+                        "/user/check_ret_user/?username=" + username,
+                        function (data) {
+                            //res=0用户名不存在
+                            {#alert(data.res);#}
+                            if(data.res=='inexistence'){
+                                $("#inputEmail3").next().show().html("请检查用户名");
+
+                        }
+                            else{
+                                $("#inputEmail3").next().show().html("邮件发送成功");
+                                setTimeout(function(){
+						location.href = "/user/login/";
+					},800);
+
+				}
+
+
+                        }
+                    )
+            });
+        })
+    </script>
+
+</head>
+<body>
+<h1 class="page-header" style="margin-left:660px;">找回密码</h1>
+<span style="color:red;margin-left:650px;" >注：只能通过邮箱找回密码</span>
+<form class="form-horizontal">
+
+  <div class="form-group" style="margin-left: 400px;">
+    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputEmail3" placeholder="请输入用户名" style="width: 300px;"><span style="color: red;font-size: 12px;display: none;">请检查用户名</span>
+    </div>
+  </div>
+{#  <div class="form-group">#}
+{#    <label for="inputPassword3" class="col-sm-2 control-label">Password</label>#}
+{#    <div class="col-sm-10">#}
+{#      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">#}
+{#    </div>#}
+{#  </div>#}
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <input type="button" class="btn btn-default" style="position: relative;top:-70px;left:400px;" value="快速找回" id="btn">
+    </div>
+  </div>
+</form>
+</body>
+</html>

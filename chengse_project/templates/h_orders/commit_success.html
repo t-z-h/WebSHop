@@ -1,0 +1,26 @@
+{% extends "base_orders.html" %}
+{% block topfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/static/css/common.css" rel="stylesheet" type="text/css" />
+<link href="/static/fonts/iconfont.css"  rel="stylesheet" type="text/css" />
+<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/Orders.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/show.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+<script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+<script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+<script src="/static/js/jquery.reveal.js" type="text/javascript"></script>
+<script src="/static/js/jquery.sumoselect.min.js" type="text/javascript"></script>
+<script src="/static/js/common_js.js" type="text/javascript"></script>
+<script src="/static/js/footer.js" type="text/javascript"></script>
+{% endblock %}
+{% block title %}订单提交成功页面{% endblock %}
+{% block unlike %}
+
+    <div style="position: relative;padding: 80px;left: 600px;">
+    <img src="/static/images/pay_success.png" alt="" style="position: relative;left:-100px;">
+<span style="color: red;font-size: 50px;position: relative;left: -80px;top: -20px;">订单提交成功</span><br>
+        <a href="/" style="font-size: 16px;background: red;color: white;position: relative;top: 30px;">返回首页</a>
+        <a href="/order/order_detail/{{ order_id }}/" style="font-size: 16px;background: red;color: white;position: relative;top: 30px;left: 40px;">查看订单详情</a>
+    </div>
+{% endblock %}

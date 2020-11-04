@@ -1,0 +1,74 @@
+{% extends "base_user.html" %}
+{% block topfiles %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/static/css/common.css" rel="stylesheet" type="text/css" />
+<link href="/static/fonts/iconfont.css"  rel="stylesheet" type="text/css" />
+<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/sumoselect.css" rel="stylesheet"  type="text/css"/>
+<link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+<script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+<script src="/static/js/jquery.sumoselect.js"></script>
+<script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+<script src="/static/js/common_js.js" type="text/javascript"></script>
+<script src="/static/js/footer.js" type="text/javascript"></script>
+{% endblock %}
+{% block title %}修改收货地址{% endblock %}
+  <script type="text/javascript">
+        $(document).ready(function () {
+            window.asd = $('.SlectBox').SumoSelect({ csvDispCount: 3 });
+            window.test = $('.testsel').SumoSelect({okCancelInMulti:true });
+        });
+    </script>
+
+{% block unlike %}
+    <div class="right_style">
+     <div class="info_content">
+     <!--地址管理样式-->
+      <div class="adderss_style">
+        <div class="title_Section"><span>收货地址管理</span></div>
+        <div class="adderss_list">
+          <!--地址列表-->
+        </div>
+<form action="/user/modify_addr/{{ addr.id }}/" method="post">
+
+            <div class="Add_Addresss">
+             <div class="title_name"><i></i>修改地址</div>
+             <table>
+              <tbody><tr>
+               <td class="label_name">收货区域</td>
+               <td colspan="3" class="select">
+
+               <input type="text" class="Add-text" name="addr" value="{{ addr.recipient_addr }}" style="width: 400px;">
+
+               </td>
+               </tr>
+
+
+              <tr>
+              <td class="label_name">收件人姓名</td><td><input type="text" class="Add-text" name="name" value="{{ addr.recipient_name }}"><i>（必填）</i></td>
+              <td class="label_name">电子邮箱</td><td><input type="text" class="Add-text" disabled="disabled" name="email" value=""><i>（选填）</i></td>
+              </tr>
+              <tr>
+              <td class="label_name">邮&nbsp;&nbsp;编</td><td><input type="text" class="Add-text" name="zip_code" value="{{ addr.zip_code }}"><i>（必填）</i></td>
+              <td class="label_name">固定电话</td><td><input type="text" class="Add-text" name="tem"><i>（选填）</i></td>
+              </tr>
+              <tr>
+              <td class="label_name">手机</td><td><input type="text" class="Add-text" name="phone" value="{{ addr.recipient_phone }}"><i>（必填）</i></td></tr>
+
+              <tr><td class="label_name"></td><td></td><td class="label_name"></td><td></td>
+              </tr>
+             </tbody></table>
+
+             <div class="btn"><input name="1" type="submit" value="确认修改地址" class="Add_btn">
+                 <a href="/user/address/"><input name="2" type="button" value="返回" class="Add_btn" style="position:relative;left:-10px;"></a></div>
+
+         </div>
+       </form>
+      </div>
+     </div>
+    </div>
+
+
+{% endblock %}
+

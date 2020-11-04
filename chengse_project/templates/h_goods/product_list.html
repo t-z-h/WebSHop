@@ -1,0 +1,119 @@
+{% extends "base_list.html" %}
+{% block topfiles %}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/static/css/common.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/fonts/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/Orders.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+    <script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.reveal.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+    <script src="/static/js/common_js.js" type="text/javascript"></script>
+    <script src="/static/js/footer.js" type="text/javascript"></script>
+    <script src="/static/js/lrtk.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="UTF-8">
+        <!--
+        //点击效果start
+        function infonav_more_down(index) {
+            var inHeight = ($("div[class='p_f_name infonav_hidden']").eq(index).find('p').length) * 30;//先设置了P的高度，然后计算所有P的高度
+            if (inHeight > 60) {
+                $("div[class='p_f_name infonav_hidden']").eq(index).animate({height: inHeight});
+                $(".infonav_more").eq(index).replaceWith('<p class="infonav_more"><a class="more"  onclick="infonav_more_up(' + index + ');return false;" href="javascript:">收起<em class="pulldown"></em></a></p>');
+            } else {
+                return false;
+            }
+        }
+
+        function infonav_more_up(index) {
+            var infonav_height = 85;
+            $("div[class='p_f_name infonav_hidden']").eq(index).animate({height: infonav_height});
+            $(".infonav_more").eq(index).replaceWith('<p class="infonav_more"> <a class="more" onclick="infonav_more_down(' + index + ');return false;" href="javascript:">更多<em class="pullup"></em></a></p>');
+        }
+
+        function onclick(event) {
+            info_more_down();
+            return false;
+        }
+
+        //点击效果end
+        //-->
+    </script>
+{% endblock %}
+{% block title %}产品列表{% endblock %}
+
+
+
+<!--顶部样式-->
+
+<!--左侧样式-->
+{% block list %}
+    <!--列表样式属性-->
+    <div class="page_right_style">
+        <div id="Sorted">
+            <div class="Sorted">
+                <div class="Sorted_style">
+                    <a href="/list/{{ goods_type_id }}/{{ pagination.page }}/" {% if sort=="default" %} class="on" {% endif %}>综合<i
+                            class="iconfont icon-fold"></i></a>
+                    <a href="/list/{{ goods_type_id }}/{{ pagination.page }}/?sort=hot" {% if sort=="hot" %} class="on" {% endif %}>销量<i
+                            class="iconfont icon-fold"></i></a>
+                    <a href="/list/{{ goods_type_id }}/{{ pagination.page }}/?sort=price" {% if sort=="price" %} class="on" {% endif %}>价格<i
+                            class="iconfont icon-fold"></i></a>
+                </div>
+                <!--产品搜索-->
+                <div class="products_search">
+                    <input name="" type="text" class="search_text" value="请输入你要搜索的产品" onfocus="this.value=''"
+                           onblur="if(!value){value=defaultValue;}"><input name="" type="submit" value=""
+                                                                           class="search_btn">
+                </div>
+                <!--页数-->
+
+            </div>
+        </div>
+        <!--产品列表样式-->
+        <div class="p_list  clearfix">
+            <ul>
+                {% for good in pagination.items %}
+                    <li class="gl-item">
+                        <em class="icon_special tejia"></em>
+                        <div class="Borders">
+                            <div class="img"><a href="/goods/{{ good.id }}"><img src="/static/{{ good.index_image }}"
+                                                                                 style="width:220px;height:220px"></a>
+                            </div>
+                            <div class="Price"><b>¥{{ good.product_price }}</b></div>
+                            <div class="name"><a href="/goods/{{ good.id }}">{{ good.product_title }}</a></div>
+                            <div class="Review">已销售<a href="#">{{ good.product_sales }}</a></div>
+
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="Paging">
+                <div class="Pagination">
+                    {% if pagination.page > 1 %}
+                    <a href="/list/{{ goods_type_id }}/1/?sort={{ sort }}">首页</a>
+                    {% endif %}
+                   {% if pagination.has_prev %}
+                        <a href="/list/{{ goods_type_id }}/{{ pagination.prev_num }}/?sort={{ sort }}">&lt;上一页</a>
+                    {% endif %}
+                    {% for num in num_pages %}
+                        {% if num ==pagination.page %}
+                            <a href="/list/{{ goods_type_id }}/{{ num }}/?sort={{ sort }}" class="on">{{ num }}</a>
+                        {% else %}
+                            <a href="/list/{{ goods_type_id }}/{{ num }}/?sort={{ sort }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if pagination.has_next %}
+                        <a href="/list/{{ goods_type_id }}/{{ pagination.next_num }}/?sort={{ sort }}">下一页&gt;</a>
+                    {% endif %}
+{#                {% if pagination.total != pagination.page %}#}
+                    <a href="/list/{{ goods_type_id }}/{{ pagination.pages }}/?sort={{ sort }}">尾页</a>
+{#                {% endif %}#}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--右侧菜单栏购物车样式-->
+{% endblock %}
+

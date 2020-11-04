@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% block topfiles %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/static/css/common.css" rel="stylesheet" type="text/css" />
+<link href="/static/fonts/iconfont.css"  rel="stylesheet" type="text/css" />
+<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/Orders.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/show.css" rel="stylesheet" type="text/css" />
+<link href="/static/css/purebox-metro.css" rel="stylesheet" id="skin">
+    <link rel="stylesheet" href="/static/css/main.css">
+<script src="/static/js/jquery.min.1.8.2.js" type="text/javascript"></script>
+<script src="/static/js/jquery.SuperSlide.2.1.1.js" type="text/javascript"></script>
+<script src="/static/js/jquery.reveal.js" type="text/javascript"></script>
+<script src="/static/js/jquery.sumoselect.min.js" type="text/javascript"></script>
+<script src="/static/js/common_js.js" type="text/javascript"></script>
+<script src="/static/js/footer.js" type="text/javascript"></script>
+<script>
+    function she_addr(id, name, addr, phone, zipcode) {
+        var $pop = $('.pop_con');
+                $(".u_addr_id").attr("value", id);
+
+                $(".name").text(name);
+                $(".addr").text(addr);
+                $(".phone").text(phone);
+                $(".zip_code").text(zipcode);
+                $pop.animate({'opacity': 0, 'top': 0}, function () {
+                    $('.pop_main').hide();
+                });
+                {#$(".pop_main").hide();#}
+            }
+    $(function () {
+
+            var $pop_con = $('.pop_main');
+            var $pop = $('.pop_con');
+            var iTop = $pop.css('top');
+            $("#addr").click(function () {
+               $pop_con.show();
+               $pop.css({'opacity': 0, 'top': 0});
+               $pop.animate({'opacity': 1, 'top': iTop});
+            });
+        $('.pop_title a,.confirm').click(function() {
+            $pop.animate({'opacity': 0, 'top': 0}, function () {
+                $pop_con.hide();
+                {#location.href = "/goods/{{ goods.id }}/"#}
+
+            });
+        });
+
+        })
+</script>
+{% endblock %}
+{% block title %}订单确认页{% endblock %}
+
+ <script type="text/javascript">
+        $(document).ready(function () {
+            window.asd = $('.SlectBox').SumoSelect({ csvDispCount: 3 });
+            window.test = $('.testsel').SumoSelect({okCancelInMulti:true });
+        });
+
+    </script>
+
+{% block body %}
+
+
+    <div class="pop_main">
+        <div class="pop_con">
+            <div class="pop_title">
+                <h3>选择地址</h3>
+                <a href="#">×</a>
+            </div>
+            <div class="pop_detail" style="position:absolute; height:200px; overflow:auto;width: 460px;padding: 20px;">
+                <br>
+{#                <ul>#}
+{#                    {% for addr in addr_all %}#}
+{#                <li>#}
+{#                    <a href="javascript:;" style="font-size: 18px;padding: 30px;">{{ addr.recipient_addr }}</a></li>#}
+{#                        <br>#}
+{#                    {% endfor %}#}
+{#                    </ul>#}
+                {% for addr in addr_all %}
+
+                <ul class="Address_info" style="border: 1px solid;border-radius:5px;">
+{#                    <input type="text" class="id" style="display: none;" value="{{ addr.id }}">#}
+            <div class="address_title">
+
+            地址信息
+
+{#                <i class="iconfont icon-close2"></i>#}
+{#                <span class="">这是您的第{{ address.id }}地址</span>#}
+
+            </div>
+
+            <li>{{ addr.recipient_name }}</li>
+            <li>{{ addr.recipient_addr }}</li>
+            <li>{{ addr.recipient_phone }}</li>
+            <li>{{ addr.zip_code }}</li>
+                    <li style="display: none;"><span class="id">{{ addr.id }}</span></li>
+
+                    <li> <a href="javascript:she_addr('{{ addr.id }}','{{ addr.recipient_name }}','{{ addr.recipient_addr }}', '{{ addr.recipient_phone }}', '{{ addr.zip_code }}')" style="color: white;background: red;position: relative;left: 200px;">设置地址</a></li>
+           </ul>
+                    <br>
+
+
+                {% endfor %}
+{#                <br>#}
+{#                <p class="pop_text">加入购物车成功</p>#}
+            </div>
+            <div class="pop_footer">
+{#                <input type="button" value="确 定" class="confirm" style="background: rgb(255,144,0);">#}
+            </div>
+        </div>
+        <div class="mask"></div>
+    </div>
+<!--确认订单页样式-->
+ <div class="Inside_pages clearfix" id="Orders">
+ <div class="Process"><img src="/static/images/Process_img_02.png" /></div>
+ <div class="Orders_style clearfix">
+   <!--地址信息样式-->
+   <div class="Address_info">
+    <div class="title_name">默认收货地址<a href="javascript:;" id="addr">其他收货地址</a></div>
+       {% if addr %}
+    <ul>
+
+        <li><label>收件人姓名：</label><span class="name">{{ addr.recipient_name }}</span></li>
+        <li><label>收件人地址：</label><span class="addr">{{ addr.recipient_addr }}</span></li>
+        <li><label>收件人电话：</label><span class="phone">{{ addr.recipient_phone }}</span></li>
+        <li><label>&nbsp;邮&nbsp;&nbsp;&nbsp;编：&nbsp;</label><span class="zip_code">{{ addr.zip_code }}</span></li>
+    </ul>
+           {% else %}
+           <a href="/user/address/" style="font-size: 25px;padding: 300px;">暂未添加收货地址，点击我去添加地址</a>
+       {% endif %}
+   </div>
+ </div>
+ <form class="form" method="post" action="/order/commit_order/">
+ <fieldset>
+ <!--快递选择-->
+     <input type="text" name="addr_id" style="display: none;" value="{{ addr.id }}" class="u_addr_id">
+     <div class="express_delivery">
+       <div class="title_name">选择快递方式</div>
+        <ul class="dowebok">
+	    <li><input type="radio" name="radio" data-labelauty="圆通快递" value="圆通快递">
+          <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+           <p><a href="#">点击查看是否在配送范围内</a></p>
+          </div>
+        </li>
+	    <li><input type="radio" name="radio" data-labelauty="中通快递" value="中通快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+          </div>
+        </li>
+	    <li><input type="radio" name="radio" data-labelauty="申通快递" value="申通快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+          </div>
+        </li>
+	    <li><input type="radio" name="radio" data-labelauty="邮政EMS" value="邮政EMS">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+          </div>
+        </li>
+        <li><input type="radio" name="radio" data-labelauty="城际快递" value="城际快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：同城包邮</p>
+
+          </div>
+        </li>
+        <li><input type="radio" name="radio" data-labelauty="韵达快递" value="韵达快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+          </div>
+        </li>
+
+	    <li><input type="radio" name="radio" data-labelauty="顺丰快递" value="顺丰快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满88元包邮</p>
+          </div>
+        </li>
+
+        <li><input type="radio" name="radio" data-labelauty="天天快递" value="天天快递">
+         <div class="description">
+           <em class="arrow"></em>
+           <p>到付价格=现付价格*1.25 ，不足1元按1元收取，到付最低15元起。此价格供参考，详情请咨询圆通当地营业网点</p>
+           <p>资费：15元</p>
+           <p class="Note">满68元包邮</p>
+          </div>
+        </li>
+        </ul>
+     </div>
+      <!--付款方式-->
+     <div class="payment">
+      <div class="title_name">支付方式</div>
+       <ul>
+        <li><input type="radio" name="radio1" data-labelauty="余额支付" value="余额支付"></li>
+        <li><input type="radio" name="radio1" data-labelauty="支付宝" value="支付宝"></li>
+        <li><input type="radio" name="radio1" data-labelauty="财付通" value="财付通"></li>
+        <li><input type="radio" name="radio1" data-labelauty="银联支付" value="银联支付"></li>
+        <li><input type="radio" name="radio1" data-labelauty="货到付款" value="货到付款"></li>
+       </ul>
+     </div>
+
+     <!--产品列表-->
+     <div class="product_List">
+      <table>
+       <thead><tr class="title"><td class="name">商品名称</td><td class="price">商品价格</td><td class="Preferential">优惠价</td><td class="Quantity">购买数量</td><td class="Money">金额</td></tr></thead>
+       <tbody>
+       {% for goods in cart_list %}
+           {% if session.url == 'http://127.0.0.1:5000/cart/show_cart/' %}
+       <tr>
+
+        <td class="Product_info"><input type="text"   name="goods_id" value="{{ goods.goods.id }}" style="display: none;">
+         <a href="#"><img src="/static/{{ goods.goods.index_image }}"  width="100px" height="100px"/></a>
+         <a href="#" class="product_name">{{ goods.goods.product_title }}</a>
+         </td>
+        <td class="original" name="original"><i>￥</i>{{ goods.goods.product_original }}</td>
+        <td class="price" name="price"><i>￥</i>{{ goods.goods.product_price }}</td>
+
+        <td class="count" name="count">{{ goods.goods_count }}</td>
+           <input type="text" name="goods_count" value="{{ goods.goods_count }}" style="display: none;">
+           <td class="Moneys" name="moneys"><i>￥</i>{{ goods.goods_count * goods.goods.product_price }}</td>
+       <input type="text" name="unit_price" value="{{ goods.goods_count * goods.goods.product_price }}" style="display: none;">
+       </tr>
+        {% else %}
+               <tr>
+
+        <td class="Product_info"><input type="text"   name="goods_id" value="{{ goods.id }}" style="display: none;">
+         <a href="#"><img src="/static/{{ goods.index_image }}"  width="100px" height="100px"/></a>
+         <a href="#" class="product_name">{{ goods.product_title }}</a>
+         </td>
+        <td class="original" name="original"><i>￥</i>{{ goods.product_original }}</td>
+        <td class="price" name="price"><i>￥</i>{{ goods.product_price }}</td>
+           <input type="text" name="unit_price" value="{{ goods.product_price }}" style="display: none;">
+        <td class="count" name="count">{{ count }}</td>
+           <input type="text" name="goods_count" value="{{ count }}" style="display: none;">
+           <td class="Moneys" name="moneys"><i>￥</i>{{ count * goods.product_price }}
+       </tr>
+           {% endif %}
+       {% endfor %}
+       </tbody>
+      </table>
+{#      <div class="envelopes">#}
+{#     选择已有红包<select name="somename" class="SlectBox" onclick="console.log($(this).val())" onchange="console.log('change is firing')">#}
+{#			        <option disabled="disabled" selected="selected">选择红包金额</option>#}
+{#			        <!--placeholder-->#}
+{#			        <option value="5元红包">5元红包</option>#}
+{#			        <option value="10元红包">10元红包</option>#}
+{#			        <option value="20元红包">20元红包</option>#}
+{#			        <option value="50元红包">50元红包</option>#}
+{#                    <option value="100元红包">100元红包</option>#}
+{#                    <option value="200元红包">200元红包</option>#}
+{#			    </select>#}
+{#                或者输入红包序列号<input name="" type="text" class="text_number" /><input type="submit"  class="verification_btn" value="验证序列号"/>#}
+{#     </div>#}
+      <div class="Pay_info" style="border: 1px solid rgb(221,221,221);">
+       <label>订单留言</label><input name="leave_message" type="text"  onkeyup="checkLength(this);" class="text_name " />  <span class="wordage">剩余字数：<span id="sy" style="color:Red;">50</span></span>
+      </div>
+      <!--价格-->
+      <div class="price_style">
+      <div class="right_direction">
+        <ul>
+{#         <li><label>商品总价</label><i>￥</i><span id="goods_total">448.00</span> </li>#}
+{#         <li><label>优惠金额</label><i>￥</i><span id="spread">-23.00</span><input type="text"  id="spread1" name="spread" style="display: none;"></li>#}
+         <li><label>配&nbsp;&nbsp;送&nbsp;&nbsp;费</label><i>￥</i><span>0(免邮)</span>
+         <input
+                 type="text" name="freight" id="freight" value="0" style="display: none;"></li>
+         <li class="shiji_price"><label>实&nbsp;&nbsp;付&nbsp;&nbsp;款</label><i>￥</i><span id="actual">425.00</span><input name="goods_price"
+                 type="text" id="actual1" value="" style="display: none;"></li>
+            <li><label>共计&nbsp;<span class="count2"></span>&nbsp;商品</label><input type="text" class="count1" name="actual" value="" style="display: none;"></li>
+           <li>待订单确认后，你将获得<span class="goods_integral">345</span>积分
+               <input type="text" id="integral1" name="integral" value="" style="display: none;"></li>
+
+        </ul>
+    {% if addr %}
+        <div class="btn"><input name="submit" type="submit" value="提交订单" class="submit_btn"/>
+        {% else %}
+        <div class="btn"><input name="submit" type="submit" value="提交订单" class="submit_btn" disabled/>
+        {% endif %}
+            {% if session.url == 'http://127.0.0.1:5000/cart/show_cart/' %}
+            <input name="" type="button"  onclick="location.href = '/cart/show_cart/'" value="返回购物车"  class="return_btn"/></div>
+                {% else %}
+                <input name="" type="button"  onclick="location.href = '/goods/{{ cart_list[0].id }}'" value="返回"  class="return_btn"/>
+    {% endif %}
+      </div>
+      </div>
+     </div>
+ </fieldset>
+ </form>
+ </div>
+
+   <!--右侧菜单栏购物车样式-->
+
+ <script type="text/javascript">
+function checkLength(which) {
+	var maxChars = 50;
+	if(which.value.length > maxChars){
+		alert("您出入的字数超多限制!");
+		// 超过限制的字数了就将 文本框中的内容按规定的字数 截取
+		which.value = which.value.substring(0,maxChars);
+		return false;
+	}else{
+		var curr = maxChars - which.value.length; //250 减去 当前输入的
+		document.getElementById("sy").innerHTML = curr.toString();
+		return true;
+	}
+}
+</script>
+<script>
+$(function(){
+    total();
+    function total() {
+        var price_original_total = 0,
+            goods_price_total = 0,
+            goods_price_spread = 0,
+            total_count = 0;
+        $(':input').labelauty();
+        $("tbody").children("tr").each(function () {
+            price_original = $(this).find(".original").text();
+            price_original = parseFloat(price_original.slice(1, price_original.length));
+
+            goods_price = $(this).find(".Moneys").text();
+            goods_price = parseFloat(goods_price.slice(1, goods_price.length));
+            price_spread = price_original * parseInt($(this).find(".count").text()) - goods_price * parseInt($(this).find(".count").text());
+            goods_count = $(this).find(".count").text();
+            {#alert(goods_count);#}
+
+
+            {#alert(price_original);#}
+            price_original_total += price_original;
+            goods_price_total += goods_price;
+            goods_price_spread += price_spread;
+            total_count += parseInt(goods_count);
+        });
+        $(".goods_integral").text(parseInt(goods_price_total / 10));
+        $("#integral1").val(parseInt(goods_price_total / 10));
+        $("#goods_total").text(price_original_total.toFixed(2));
+        $("#spread").text(goods_price_spread.toFixed(2));
+        $("#actual").text(goods_price_total.toFixed(2));
+        $(".count2").text(total_count);
+        $(".count1").val(total_count);
+        $("#actual1").val(goods_price_total.toFixed(2));
+
+    }
+});
+</script>
+
+{% endblock %}
